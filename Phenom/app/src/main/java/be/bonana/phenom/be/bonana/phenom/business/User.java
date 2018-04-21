@@ -15,7 +15,6 @@ public class User {
     private Challenge challenge;
 
     public User () {
-        System.out.println("Hello");
     }
 
     public User(Challenge challenge) {
