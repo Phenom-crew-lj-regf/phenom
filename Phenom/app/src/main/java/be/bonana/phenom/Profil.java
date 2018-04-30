@@ -23,11 +23,8 @@ public class Profil extends AppCompatActivity {
     private String[] titles;
     private String[] descriptions;
     private String[] filenames;
-    private String[] endDates;
     private String username = "UserNotFound";
     private String pofilPicPath;
-    private String endDate;
-
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -64,7 +61,6 @@ public class Profil extends AppCompatActivity {
        if(bundle!=null) {
            this.username = (String) bundle.get("username");
            userNameTB.setText(this.username);
-           this.setTitle(username);
 
            String[] stringList = manager.readFile();
            Boolean allTablesFilled = false;
@@ -74,7 +70,7 @@ public class Profil extends AppCompatActivity {
            if (allTablesFilled) {
 
                // Pass String arrays to LazyAdapter Class
-               adapter = new GridViewAdapter(this, filenames, titles, descriptions, endDates, false);
+               adapter = new GridViewAdapter(this, filenames, titles, descriptions, false);
                // Set the LazyAdapter to the GridView
                gv.setAdapter(adapter);
            }
@@ -102,7 +98,6 @@ public class Profil extends AppCompatActivity {
                 // Pass click position
                 i.putExtra("position", position);
                 i.putExtra("profilPicPath",pofilPicPath);
-                i.putExtra("enddates",endDates);
                 startActivity(i);
 
             }
@@ -118,7 +113,6 @@ public class Profil extends AppCompatActivity {
         List<String> tList = new ArrayList<String>();
         List<String> dList = new ArrayList<String>();
         List<String> fList = new ArrayList<String>();
-        List<String> dateList = new ArrayList<String>();
         Boolean allTableFilled = false;
 
 
@@ -140,10 +134,6 @@ public class Profil extends AppCompatActivity {
                line = line.substring(line.indexOf(';') + 1);
                dList.add(description);
 
-               String end = line.substring(0, line.indexOf(';'));
-               line = line.substring(line.indexOf(';') + 1);
-               dateList.add(end);
-
                String filepath = line.substring(0);
                line = line.substring(line.indexOf(';') + 1);
                fList.add(filepath);
@@ -159,8 +149,6 @@ public class Profil extends AppCompatActivity {
         this.descriptions = dList.toArray(this.descriptions);
         this.filenames = new String[fList.size()];
         this.filenames = fList.toArray(this.filenames);
-        this.endDates = new String[dateList.size()];
-        this.endDates = dateList.toArray(this.endDates);
 
         if(this.titles!=null && this.descriptions!=null && this.filenames!=null )
             allTableFilled = true;
@@ -176,7 +164,6 @@ public class Profil extends AppCompatActivity {
         if(username!=null && bundle !=null) {
             intent.putExtra("username", this.username);
             intent.putExtra("filepath",(String) bundle.get("filepath"));
-            intent.putExtra("enddate",(String) bundle.get("enddate"));
             startActivity(intent);
         }
 
@@ -191,11 +178,6 @@ public class Profil extends AppCompatActivity {
 
     public void navBackToHome(){
         Intent intent = new Intent(this, MainActivity.class);
-        Bundle bundle = getIntent().getExtras();
-
-        intent.putExtra("username", this.username);
-        intent.putExtra("filepath",(String) bundle.get("filepath"));
-        intent.putExtra("enddate",(String) bundle.get("enddate"));
         startActivity(intent);
     }
 }

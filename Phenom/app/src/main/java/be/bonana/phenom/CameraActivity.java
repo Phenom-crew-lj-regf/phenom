@@ -299,7 +299,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     public void goBackToAddChallenge(){
-        Intent intent = new Intent(this, Add.class);
+        Intent intent = new Intent(this, AddChallenge.class);
         Bundle bundle = this.getIntent().getExtras();
         String username = null;
 

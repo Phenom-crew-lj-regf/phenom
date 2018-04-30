@@ -15,7 +15,7 @@
         android:id="@+id/grid"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@android:color/white"
+        android:background="#B2DFDB"
         android:columnWidth="90dp"
         android:numColumns="1"
         android:stretchMode="columnWidth" />

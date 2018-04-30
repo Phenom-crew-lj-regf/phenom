@@ -26,17 +26,15 @@ public class GridViewAdapter extends BaseAdapter {
     private String[] filepath;
     private String[] filename;
     private String[] descriptions;
-    private String[] endDates;
     private boolean isGeneralView;
 
 
     private static LayoutInflater inflater = null;
 
-    public GridViewAdapter(Activity a, String[] fpath, String[] fname, String[] descriptions,String[] endDates,boolean isGeneralView) {
+    public GridViewAdapter(Activity a, String[] fpath, String[] fname, String[] descriptions,boolean isGeneralView) {
         activity = a;
         filepath = fpath;
         filename = fname;
-        this.endDates = endDates;
         this.isGeneralView = isGeneralView;
         this.descriptions = descriptions;
         inflater = (LayoutInflater) activity
@@ -62,19 +60,15 @@ public class GridViewAdapter extends BaseAdapter {
         if (convertView == null)
             vi = inflater.inflate(R.layout.gridview_item, null);
         // Locate the TextView in gridview_item.xml
-        TextView title;
+        TextView text;
         TextView description;
-        TextView timer;
-
+        final TextView timer;
         ImageView image;
         if(isGeneralView) {
-             title = (TextView) vi.findViewById(R.id.title);
-             title.setText(filename[position]);
+             text = (TextView) vi.findViewById(R.id.title);
             // Locate description in gridview_item.xml
              description = (TextView) vi.findViewById(R.id.grid_description);
-             description.setText("Description from "+filename[position]);
-             timer = (TextView) vi.findViewById(R.id.timer);
-             timer.setText("Date de fin: "+endDates[position]);
+            timer = (TextView) vi.findViewById(R.id.timer);
             // Locate the ImageView in gridview_item.xml
              image = (ImageView) vi.findViewById(R.id.image);
             // Decode the filepath with BitmapFactory followed by the position
@@ -84,25 +78,42 @@ public class GridViewAdapter extends BaseAdapter {
             vi.findViewById(R.id.grid_description).setVisibility(View.VISIBLE);
 
         }else{
-            title = (TextView) vi.findViewById(R.id.title);
-            title.setText(filename[position]);
-            // Locate description in gridview_item.xml
-            description = (TextView) vi.findViewById(R.id.grid_description);
-            description.setText("Description from "+filename[position]);
+             text = (TextView) vi.findViewById(R.id.title);
+            //Locate description in gridview_item.xml
+             description = (TextView) vi.findViewById(R.id.grid_description);
             timer = (TextView) vi.findViewById(R.id.timer);
-            timer.setText("Date de fin: "+endDates[position]);
-            // Locate the ImageView in gridview_item.xml
+             //Locate the ImageView in gridview_item.xml
             image = (ImageView) vi.findViewById(R.id.image);
+           // image.setImageURI(Uri.parse(filepath[position]));
             // Decode the filepath with BitmapFactory followed by the position
-            Bitmap bmp = BitmapFactory.decodeFile(filename[position]);
+            File file = new File(filepath[position]);
+          //  if(file.exists())
+           image.setImageURI(Uri.parse(filepath[position]));
+        //     Bitmap bmp = BitmapFactory.decodeFile(filepath[position]);
             // Set the decoded bitmap into ImageView
-            image.setImageBitmap(bmp);
+       //     image.setImageBitmap(bmp);
             vi.findViewById(R.id.grid_description).setVisibility(View.INVISIBLE);
         }
 
 
 
+        // Set file name to the TextView followed by the position
+        text.setText(filename[position]);
 
+        // Set file name to the TextView followed by the position
+
+        new CountDownTimer(30000000, 5000) {
+
+            public void onTick(long millisUntilFinished) {
+                timer.setText("Temps restant: " + String.format("%1$tH:%1$tM:%1$tS", millisUntilFinished));
+            }
+
+            public void onFinish() {
+                timer.setText("Temps écoulé!");
+            }
+        }.start();
+
+        description.setText(descriptions[position]);
 
         return vi;
     }

@@ -4,23 +4,16 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.icu.text.SimpleDateFormat;
-import android.icu.util.Calendar;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,8 +35,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
-import java.text.ParseException;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,15 +45,12 @@ public class MainActivity extends AppCompatActivity {
     private String[] FileNameStrings;
     private String[] Descriptions;
     private File[] listFile;
-    private String[] endDates;
     private String profilPicFileName = "/sdcard/Phenom/Profils/Profil.png" ;
     GridView grid;
     GridViewAdapter adapter;
     LinearLayout profil_layout;
-    String currentUser="lironjerry";
+    String currentUser;
     String currentUserProfil;
-    GestureDetectorCompat gestureDetectorCompat;
-    PhenomGestureListener gListiner;
 
 
 
@@ -99,17 +87,14 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        AppBarLayout appBar = (AppBarLayout) findViewById(R.id.appBar);
         setSupportActionBar(toolbar);
         TextView textView = ((TextView) findViewById (R.id.username));
         currentUser = (String) textView.getText();
-        this.setTitle(currentUser);
 
 
         // Check for SD Card
@@ -145,23 +130,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Date start = new Date();
-        long millisStart = start.getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy");
-        String dateInString = "09-09-2017";
-        Date end = new Date();
-        try {
-             end = sdf.parse(dateInString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        long period = end.getTime() - start.getTime();
-
-        new CountDownTimer(period, 1000) {
+        new CountDownTimer(30000000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                TextView mTextField = (TextView) findViewById(R.id.textView2);
-                mTextField.setText("Temps restant: " + String.format("%tjdays %1$tHhours %1$tMminutes", millisUntilFinished));
+                mTextField.setText("Temps restant: " + String.format("%1$tH:%1$tM:%1$tS", millisUntilFinished));
             }
 
             public void onFinish() {
@@ -173,19 +146,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation_main);
         navigation.setSelectedItemId(R.id.navigation_dashboard);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        gListiner = new PhenomGestureListener();
-        gestureDetectorCompat = new GestureDetectorCompat(this, gListiner);
 
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        this.gestureDetectorCompat.onTouchEvent(event);
-        if(gListiner.isLeftSwipe()){
-            navToMyPofil(currentUser);
-        }
-
-        return super.onTouchEvent(event);
     }
 
     private void addChallenge(){
@@ -258,7 +219,6 @@ public class MainActivity extends AppCompatActivity {
             FilePathStrings = new String[listFile.length];
             // Create a String array for FileNameStrings
             FileNameStrings = new String[listFile.length];
-            endDates = new String[listFile.length];
 
             // Create a String array for description
             Descriptions = new String[listFile.length];
@@ -271,14 +231,13 @@ public class MainActivity extends AppCompatActivity {
                 // Get the name image file
                 FileNameStrings[i] = listFile[i].getName();
                 Descriptions[i] = "Descriptions from " +listFile[i].getName();
-                endDates[i] = "09/09/2017";
             }
         }
 
         // Locate the GridView in gridview_main.xml
         grid = (GridView) findViewById(R.id.gridview);
         // Pass String arrays to LazyAdapter Class
-        adapter = new GridViewAdapter(this, FilePathStrings, FileNameStrings, Descriptions,endDates,true);
+        adapter = new GridViewAdapter(this, FilePathStrings, FileNameStrings, Descriptions,true);
         // Set the LazyAdapter to the GridView
         grid.setAdapter(adapter);
 
@@ -293,7 +252,6 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("username", FileNameStrings[position]);
                 //Pass String arrays FilePathStrings
                 intent.putExtra("filepath", FilePathStrings[position]);
-                intent.putExtra("enddate",endDates[position]);
                 startActivity(intent);
             }
 
